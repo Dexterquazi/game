@@ -1,0 +1,29 @@
+--- # httpd
+- hosts: all
+  user: faizii
+  become: yes
+  connection: ssh
+  tasks:
+    - name: test
+      yum:
+        name: docker
+        state: present
+    - name: stating
+      service:
+        name: docker
+        state: started
+    - name: removeing existing container
+      shell: docker rm -f $(docker ps -aq)
+    - name: setting up container
+      shell: docker run -d --name myc -p 80:80 httpd
+    - name: deleting index
+      command: docker exec -it myc  rm -rf  /usr/local/apache2/htdocs/index.html
+    - name: install git and game setup
+      command:  docker exec -it myc apt update -y
+      register: q
+    - name: tash
+      command: docker exec -it myc apt install git -y
+      register: p
+    - name: cloning repo
+      command: docker exec -it myc git clone https://github.com/ioniodi/Super-Mario.git /usr/local/apache2/htdocs
+      register: reh
